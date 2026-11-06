@@ -1,0 +1,38 @@
+[
+  {
+    "id": "cheese-jar",
+    "name": "Cheesy Makhana",
+    "description": "Crunchy roasted makhana with a rich cheesy flavour.",
+    "image": "Cheese_jar.png",
+    "pack_type": "65 g jar",
+    "price_paise": 17000,
+    "currency": "INR"
+  },
+  {
+    "id": "peri-jar",
+    "name": "Peri Peri Makhana",
+    "description": "Crunchy roasted makhana with a bold, tangy Peri Peri flavour.",
+    "image": "Peri_jar.png",
+    "pack_type": "65 g jar",
+    "price_paise": 17000,
+    "currency": "INR"
+  },
+  {
+    "id": "pudina-jar",
+    "name": "Pudina Makhana",
+    "description": "Crunchy roasted makhana with a refreshing pudina flavour.",
+    "image": "Pudina_jar.png",
+    "pack_type": "65 g jar",
+    "price_paise": 17000,
+    "currency": "INR"
+  },
+  {
+    "id": "salt-jar",
+    "name": "Salt & Pepper Makhana",
+    "description": "Crunchy roasted makhana seasoned with salt and pepper.",
+    "image": "Salt_jar.png",
+    "pack_type": "65 g jar",
+    "price_paise": 17000,
+    "currency": "INR"
+  }
+]

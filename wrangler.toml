@@ -1,0 +1,15 @@
+name = "nuttyment-orders-api"
+compatibility_date = "2026-11-04"
+pages_build_output_dir = "."
+
+[[d1_databases]]
+binding = "DB"
+database_name = "nuttyment-orders"
+database_id = "366f9872-f5e4-410a-bad4-937166d6ee70"
+migrations_dir = "migrations"
+
+[vars]
+STORE_NAME = "Nuttyment Foods"
+STORE_EMAIL = "nuttymentfoods@gmail.com"
+STORE_PHONE = "+919921214272"
+STORE_CURRENCY = "INR"

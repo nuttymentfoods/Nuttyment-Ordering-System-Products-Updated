@@ -1,0 +1,858 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nuttyment | Admin Dashboard</title>
+
+<style>
+:root {
+  --green:#075b3b;
+  --green2:#0b7650;
+  --ink:#18352a;
+  --muted:#718078;
+  --line:#e7eee9;
+  --bg:#f5f8f5;
+  --white:#fff;
+  --red:#b42318;
+  --shadow:0 12px 35px rgba(20,55,38,.07);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{border:0;border-radius:10px;padding:10px 14px;background:var(--green);color:white;font-weight:700;cursor:pointer}
+button:disabled{opacity:.5;cursor:wait}
+.btn-light{background:#edf5ef;color:var(--green)}
+.btn-danger{background:#fff0ef;color:var(--red)}
+.btn-small{padding:7px 10px;font-size:12px}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.tiny{font-size:12px}
+.sidebar{position:fixed;inset:0 auto 0 0;width:245px;background:#073f2c;color:white;padding:24px 16px;display:flex;flex-direction:column;z-index:4}
+.brand{display:flex;gap:12px;align-items:center;padding:4px 10px 28px}
+.brand-mark{width:42px;height:42px;border-radius:13px;background:#d9f2df;color:#075b3b;display:grid;place-items:center;font-weight:900;font-size:19px}
+.brand strong{display:block;font-size:17px}
+.brand span{font-size:11px;color:#b8d7c5}
+.nav-label{padding:12px;color:#91b8a3;text-transform:uppercase;letter-spacing:1px;font-size:10px;font-weight:800}
+.nav button{width:100%;background:transparent;color:#d7e9df;text-align:left;padding:12px;margin:3px 0;display:flex;gap:12px}
+.nav button.active,.nav button:hover{background:#145c40;color:white}
+.nav-icon{width:22px}
+.side-bottom{margin-top:auto;border-top:1px solid #286448;padding:16px 8px 0}
+.side-bottom small{display:block;color:#b8d7c5;margin-bottom:10px}
+.main{margin-left:245px;padding:28px 34px;max-width:1800px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:26px}
+.eyebrow{color:var(--green2);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:1.3px}
+.topbar h1{font-size:27px;margin:4px 0}
+.top-actions{display:flex;gap:9px;align-items:center}
+.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#dcefe2;color:var(--green);font-weight:800}
+.page{display:none}
+.page.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:20px}
+.card,.panel{background:white;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.stat{padding:18px}
+.stat-head{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;font-weight:700}
+.stat-icon{width:34px;height:34px;border-radius:11px;background:#edf6ef;color:var(--green);display:grid;place-items:center}
+.stat strong{display:block;font-size:26px;margin:13px 0 3px}
+.stat small{color:var(--muted);font-size:11px}
+.panel{padding:20px;margin-bottom:18px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px}
+.panel-head h2{font-size:17px;margin:0}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:15px 0}
+.field{border:1px solid #d9e4dc;border-radius:10px;padding:10px 12px;background:white;color:var(--ink);min-height:39px}
+.search{min-width:240px;flex:1}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th,td{text-align:left;padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{background:#f7faf7;color:#6b7b71;font-size:10px;text-transform:uppercase;letter-spacing:.8px}
+tbody tr:last-child td{border-bottom:0}
+.order-id{font-weight:800;color:var(--green);font-size:12px}
+.subline{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.customer{font-weight:700}
+.status{border:1px solid #dce7df;border-radius:8px;padding:8px;background:white;color:var(--ink);font-size:12px;min-width:118px}
+.pill{display:inline-flex;border-radius:30px;padding:5px 9px;font-size:10px;font-weight:800;text-transform:uppercase;background:#edf5ef;color:#286345}
+.pill.pending,.pill.new{background:#fff4dc;color:#946200}
+.pill.delivered,.pill.paid{background:#e7f7ed;color:#187245}
+.pill.cancelled{background:#fff0ef;color:#b42318}
+.pill.shipped{background:#edf2ff;color:#425ca8}
+.empty{padding:35px;text-align:center;color:var(--muted)}
+.product-cell{display:flex;align-items:center;gap:10px}
+.product-img{width:48px;height:48px;object-fit:contain;border:1px solid var(--line);border-radius:10px}
+.product-name{font-weight:800}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.grid-two{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.report-row{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.bar{height:8px;background:#edf3ee;border-radius:10px;overflow:hidden;margin-top:8px}
+.bar span{display:block;height:100%;background:var(--green2)}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.form-grid label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:#53665a}
+.form-grid .wide{grid-column:1/-1}
+.form-grid input,.form-grid textarea{width:100%;border:1px solid #d9e4dc;border-radius:9px;padding:10px;background:white}
+.form-grid textarea{min-height:70px}
+.modal-backdrop{position:fixed;inset:0;background:#10251ccc;display:grid;place-items:center;padding:18px;z-index:10}
+.modal{background:white;border-radius:17px;padding:22px;width:min(620px,100%);max-height:90vh;overflow:auto}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.detail{background:#f7faf7;border-radius:10px;padding:12px}
+.detail small{display:block;color:var(--muted);margin-bottom:5px}
+.toast{position:fixed;right:22px;bottom:22px;background:#123f2d;color:white;padding:13px 18px;border-radius:11px;z-index:20}
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#eaf4ec,#f8faf7)}
+.login-card{width:min(420px,100%);background:white;padding:32px;border-radius:20px;box-shadow:var(--shadow)}
+.login-card h1{margin:10px 0 5px}
+.login-card input{width:100%;padding:13px;border:1px solid #d9e4dc;border-radius:10px;margin:16px 0}
+.login-card button{width:100%;padding:13px}
+.error{color:var(--red);min-height:20px}
+@media(max-width:1050px){
+  .sidebar{width:205px}.main{margin-left:205px;padding:24px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-two{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+  .sidebar{position:static;width:auto;padding:12px;display:block}
+  .brand{padding:4px 7px 12px}
+  .nav-label,.side-bottom{display:none}
+  .nav{display:flex;overflow:auto;gap:5px}
+  .nav button{white-space:nowrap;width:auto;margin:0;padding:9px}
+  .main{margin:0;padding:18px 12px}
+  .stats{gap:9px}
+  .stat{padding:13px}
+  .panel{padding:14px}
+  .toolbar .search{min-width:100%}
+  .form-grid,.detail-grid{grid-template-columns:1fr}
+  .form-grid .wide{grid-column:auto}
+}
+</style>
+</head>
+
+<body>
+
+<section id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <div class="brand-mark">N</div>
+    <div class="eyebrow" style="margin-top:18px">Nuttyment Foods</div>
+    <h1>Admin sign in</h1>
+    <p class="muted">Manage orders, products and store performance.</p>
+    <form id="loginForm">
+      <input id="password" type="password" placeholder="Enter admin password" required autocomplete="current-password">
+      <button id="loginBtn" type="submit">Sign in to dashboard</button>
+    </form>
+    <p id="loginError" class="error tiny"></p>
+  </div>
+</section>
+
+<div id="app" class="hidden">
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">N</div>
+    <div><strong>Nuttyment</strong><span>STORE MANAGEMENT</span></div>
+  </div>
+
+  <div class="nav-label">Workspace</div>
+  <nav class="nav">
+    <button class="active" data-page="overview">▦ Overview</button>
+    <button data-page="orders">▤ Orders</button>
+    <button data-page="products">◇ Products</button>
+    <button data-page="reports">▥ Reports</button>
+  </nav>
+
+  <div class="side-bottom">
+    <small>Signed in as Administrator</small>
+    <button class="btn-light" style="width:100%" id="logoutBtn">Sign out</button>
+  </div>
+</aside>
+
+<main class="main">
+
+<div class="topbar">
+  <div>
+    <div class="eyebrow">Store control center</div>
+    <h1 id="pageTitle">Overview</h1>
+    <div class="muted tiny">Welcome back. Here's what's happening with your store.</div>
+  </div>
+  <div class="top-actions">
+    <button class="btn-light" id="refreshBtn">↻ Refresh data</button>
+    <div class="avatar">N</div>
+  </div>
+</div>
+
+<section id="overviewPage" class="page active">
+  <div class="stats">
+    <div class="card stat"><div class="stat-head">Orders loaded</div><strong id="sOrders">0</strong><small>Latest 300 orders</small></div>
+    <div class="card stat"><div class="stat-head">Total order value</div><strong id="sValue">₹0.00</strong><small>Value of loaded orders</small></div>
+    <div class="card stat"><div class="stat-head">Paid revenue</div><strong id="sPaid">₹0.00</strong><small>Payments marked paid</small></div>
+    <div class="card stat"><div class="stat-head">Active products</div><strong id="sProducts">0</strong><small>Visible on storefront</small></div>
+  </div>
+
+  <div class="grid-two">
+    <div class="panel">
+      <div class="panel-head"><h2>Recent orders</h2><button class="btn-light btn-small" data-goto="orders">View all orders →</button></div>
+      <div id="recentOrders"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Order fulfilment</h2></div>
+      <div id="fulfilment"></div>
+    </div>
+  </div>
+</section>
+
+<section id="ordersPage" class="page">
+  <div class="stats">
+    <div class="card stat">All loaded orders<strong id="oCount">0</strong></div>
+    <div class="card stat">New / confirmed<strong id="oOpen">0</strong></div>
+    <div class="card stat">Shipped<strong id="oShipped">0</strong></div>
+    <div class="card stat">Delivered<strong id="oDelivered">0</strong></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div><h2>Order management</h2><span class="muted tiny">Search, update, inspect or delete orders.</span></div>
+      <button class="btn-light btn-small" id="exportVisible">↓ Export CSV</button>
+    </div>
+
+    <div class="toolbar">
+      <input class="field search" id="orderSearch" placeholder="Search order number, customer, phone or email">
+      <select class="field" id="statusFilter">
+        <option value="">All statuses</option>
+        <option>new</option><option>confirmed</option><option>processing</option>
+        <option>shipped</option><option>delivered</option><option>cancelled</option>
+      </select>
+      <select class="field" id="paymentFilter">
+        <option value="">All payments</option><option value="cod">COD</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="ordersBody"></tbody>
+      </table>
+    </div>
+    <p class="muted tiny">Latest 300 orders are loaded.</p>
+  </div>
+</section>
+
+<section id="productsPage" class="page">
+  <div class="panel">
+    <div class="panel-head">
+      <div><h2>Product catalogue</h2><span class="muted tiny">Add, edit and hide products.</span></div>
+      <button id="addProductBtn">＋ Add product</button>
+    </div>
+
+    <div class="toolbar">
+      <input class="field search" id="productSearch" placeholder="Search products">
+      <select class="field" id="productFilter">
+        <option value="all">All products</option>
+        <option value="active">Active only</option>
+        <option value="inactive">Inactive only</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table style="min-width:780px">
+        <thead><tr><th>Product</th><th>Pack size</th><th>Price</th><th>Stock</th><th>Visibility</th><th>Actions</th></tr></thead>
+        <tbody id="productsBody"></tbody>
+      </table>
+    </div>
+    <p class="muted tiny">Hiding a product preserves its historical order records.</p>
+  </div>
+</section>
+
+<section id="reportsPage" class="page">
+  <div class="stats">
+    <div class="card stat">Orders<strong id="rOrders">0</strong></div>
+    <div class="card stat">Order value<strong id="rValue">₹0.00</strong></div>
+    <div class="card stat">Paid revenue<strong id="rPaid">₹0.00</strong></div>
+    <div class="card stat">COD orders<strong id="rCod">0</strong></div>
+  </div>
+
+  <div class="grid-two">
+    <div class="panel"><h2>Order status breakdown</h2><div id="statusReport"></div></div>
+    <div class="panel"><h2>Payment breakdown</h2><div id="paymentReport"></div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div><h2>Export reports</h2><span class="muted tiny">CSV of latest 300 orders.</span></div>
+      <button id="exportAll">↓ Export latest 300 CSV</button>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<div id="modalBackdrop" class="modal-backdrop hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">Details</h2>
+      <button class="btn-light btn-small" id="closeModal">✕</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+// IMPORTANT: Use /api because this is the working Cloudflare Pages API route.
+const API = "/api";
+
+// Keep the same token key throughout login and dashboard.
+const TOKEN_KEY = "nutty_admin_token";
+
+let token = localStorage.getItem(TOKEN_KEY) || "";
+let orders = [];
+let products = [];
+let toastTimer;
+
+const $ = id => document.getElementById(id);
+
+const money = p =>
+  "₹" + ((Number(p) || 0) / 100).toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+
+function notify(message) {
+  $("toast").textContent = message;
+  $("toast").classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $("toast").classList.add("hidden"), 3000);
+}
+
+// Central API function: always checks the response before parsing JSON.
+async function api(path, options = {}) {
+  const response = await fetch(API + "/" + path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token,
+      ...(options.headers || {})
+    }
+  });
+
+  const text = await response.text();
+  let data = {};
+
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error("Invalid API response (" + response.status + "). Check the API endpoint.");
+  }
+
+  if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      throw new Error("Session expired or access denied. Please sign in again.");
+    }
+    throw new Error(data.error || "Request failed: " + response.status);
+  }
+
+  return data;
+}
+
+function showLogin() {
+  $("loginScreen").classList.remove("hidden");
+  $("app").classList.add("hidden");
+}
+
+function showApp() {
+  $("loginScreen").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  loadAll().catch(error => {
+    notify(error.message);
+    if (/session expired|access denied/i.test(error.message)) logout();
+  });
+}
+
+function logout() {
+  token = "";
+  localStorage.removeItem(TOKEN_KEY);
+  showLogin();
+}
+
+$("loginForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  $("loginBtn").disabled = true;
+  $("loginError").textContent = "";
+
+  try {
+    const response = await fetch(API + "/admin/login", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        password: $("password").value
+      })
+    });
+
+    const text = await response.text();
+    let data = {};
+
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      throw new Error("Login API returned an invalid response. HTTP " + response.status);
+    }
+
+    if (!response.ok || !data.token) {
+      throw new Error(data.error || "Unable to sign in. Check your password and server settings.");
+    }
+
+    token = data.token;
+    localStorage.setItem(TOKEN_KEY, token);
+    $("password").value = "";
+    showApp();
+
+  } catch (error) {
+    $("loginError").textContent = error.message;
+  } finally {
+    $("loginBtn").disabled = false;
+  }
+});
+
+$("logoutBtn").onclick = logout;
+
+$("refreshBtn").onclick = () =>
+  loadAll().then(() => notify("Dashboard refreshed")).catch(e => notify(e.message));
+
+async function loadAll() {
+  const [orderData, productData] = await Promise.all([
+    api("admin/orders"),
+    api("admin/products")
+  ]);
+
+  orders = orderData.orders || [];
+  products = productData.products || [];
+  renderAll();
+}
+
+function renderAll() {
+  renderOrders();
+  renderProducts();
+  renderOverview();
+  renderReports();
+}
+
+function go(page) {
+  document.querySelectorAll(".page").forEach(el => el.classList.remove("active"));
+  $(page + "Page").classList.add("active");
+
+  document.querySelectorAll(".nav button").forEach(button =>
+    button.classList.toggle("active", button.dataset.page === page)
+  );
+
+  $("pageTitle").textContent = page[0].toUpperCase() + page.slice(1);
+
+  if (page === "reports") renderReports();
+}
+
+document.querySelectorAll(".nav button").forEach(button =>
+  button.onclick = () => go(button.dataset.page)
+);
+
+document.querySelectorAll("[data-goto]").forEach(button =>
+  button.onclick = () => go(button.dataset.goto)
+);
+
+function statusOptions(current) {
+  return ["new","confirmed","processing","shipped","delivered","cancelled"]
+    .map(s => `<option value="${s}" ${s === current ? "selected" : ""}>${s}</option>`)
+    .join("");
+}
+
+function renderOrders() {
+  const query = $("orderSearch").value.trim().toLowerCase();
+  const status = $("statusFilter").value;
+  const payment = $("paymentFilter").value;
+
+  const rows = orders.filter(o =>
+    (!status || o.order_status === status) &&
+    (!payment || o.payment_method === payment) &&
+    (!query || [o.order_number,o.customer_name,o.phone,o.email]
+      .join(" ").toLowerCase().includes(query))
+  );
+
+  $("ordersBody").innerHTML = rows.map(o => `
+    <tr>
+      <td><span class="order-id">${esc(o.order_number)}</span>
+        <span class="subline">${esc(o.created_at)}</span></td>
+      <td><span class="customer">${esc(o.customer_name)}</span>
+        <span class="subline">${esc(o.phone)}</span>
+        <span class="subline">${esc(o.email)}</span></td>
+      <td>${(o.items || []).map(i =>
+        `${esc(i.quantity)} × ${esc(i.product_name)}`
+      ).join("<br>")}</td>
+      <td><b>${money(o.total_paise)}</b></td>
+      <td><span class="pill">${esc(o.payment_method)}</span>
+        <span class="subline">${esc(o.payment_status)}</span></td>
+      <td><select class="status" onchange="updateStatus('${esc(o.id)}',this.value)">
+        ${statusOptions(o.order_status)}
+      </select></td>
+      <td><div class="actions">
+        <button class="btn-light btn-small" onclick="viewOrder('${esc(o.id)}')">View</button>
+        <button class="btn-danger btn-small" onclick="deleteOrder('${esc(o.id)}')">Delete</button>
+      </div></td>
+    </tr>
+  `).join("") || '<tr><td colspan="7" class="empty">No orders found.</td></tr>';
+
+  $("oCount").textContent = orders.length;
+  $("oOpen").textContent = orders.filter(o =>
+    ["new","confirmed","processing"].includes(o.order_status)).length;
+  $("oShipped").textContent = orders.filter(o => o.order_status === "shipped").length;
+  $("oDelivered").textContent = orders.filter(o => o.order_status === "delivered").length;
+}
+
+async function updateStatus(id, status) {
+  try {
+    await api("admin/orders/status", {
+      method: "PATCH",
+      body: JSON.stringify({id,status})
+    });
+
+    const order = orders.find(o => o.id === id);
+    if (order) order.order_status = status;
+
+    renderAll();
+    notify("Order status updated");
+  } catch (error) {
+    notify(error.message);
+    loadAll();
+  }
+}
+
+async function deleteOrder(id) {
+  const order = orders.find(o => o.id === id);
+
+  if (!order || !confirm("Permanently delete " + order.order_number + "?")) return;
+
+  try {
+    await api("admin/orders", {
+      method: "DELETE",
+      body: JSON.stringify({id})
+    });
+
+    orders = orders.filter(o => o.id !== id);
+    renderAll();
+    notify("Order deleted");
+  } catch (error) {
+    notify(error.message);
+  }
+}
+
+function viewOrder(id) {
+  const o = orders.find(x => x.id === id);
+  if (!o) return;
+
+  $("modalTitle").textContent = "Order " + o.order_number;
+
+  $("modalBody").innerHTML = `
+    <div class="detail-grid">
+      <div class="detail"><small>Customer</small><strong>${esc(o.customer_name)}</strong>
+        <p>${esc(o.phone)}<br>${esc(o.email)}</p></div>
+      <div class="detail"><small>Order total</small><strong>${money(o.total_paise)}</strong>
+        <p>${esc(o.payment_method)} · ${esc(o.payment_status)}</p></div>
+      <div class="detail"><small>Delivery address</small>
+        <strong>${esc([o.address,o.city,o.state,o.postal_code,o.country].filter(Boolean).join(", "))}</strong></div>
+      <div class="detail"><small>Order information</small>
+        <strong>${esc(o.created_at)}</strong><p>Status: ${esc(o.order_status)}</p></div>
+    </div>
+    <h3>Items</h3>
+    ${(o.items || []).map(i => `
+      <div class="report-row">
+        <span>${esc(i.quantity)} × ${esc(i.product_name)}</span>
+        <b>${money(i.line_total_paise)}</b>
+      </div>`).join("")}
+    <div class="report-row"><b>Total</b><b>${money(o.total_paise)}</b></div>
+    ${o.notes ? `<p>Notes: ${esc(o.notes)}</p>` : ""}
+  `;
+
+  $("modalBackdrop").classList.remove("hidden");
+}
+
+$("closeModal").onclick = () => $("modalBackdrop").classList.add("hidden");
+
+$("modalBackdrop").onclick = event => {
+  if (event.target === $("modalBackdrop")) {
+    $("modalBackdrop").classList.add("hidden");
+  }
+};
+
+function renderProducts() {
+  const query = $("productSearch").value.trim().toLowerCase();
+  const filter = $("productFilter").value;
+
+  const rows = products.filter(p =>
+    (filter === "all" ||
+      (filter === "active" ? !!p.active : !p.active)) &&
+    (!query || [p.name,p.pack_type,p.description].join(" ").toLowerCase().includes(query))
+  );
+
+  $("productsBody").innerHTML = rows.map(p => `
+    <tr>
+      <td><div class="product-cell">
+        ${p.image ? `<img class="product-img" src="${esc(p.image)}" alt="">` : ""}
+        <div><div class="product-name">${esc(p.name)}</div>
+        <span class="subline">${esc(p.description || "")}</span></div>
+      </div></td>
+      <td>${esc(p.pack_type)}</td>
+      <td><b>${money(p.price_paise)}</b></td>
+      <td>${p.stock == null ? "Unlimited" : esc(p.stock)}</td>
+      <td><span class="pill">${p.active ? "Active" : "Hidden"}</span></td>
+      <td><div class="actions">
+        <button class="btn-light btn-small" onclick="editProduct('${esc(p.id)}')">Edit</button>
+        ${p.active
+          ? `<button class="btn-danger btn-small" onclick="removeProduct('${esc(p.id)}')">Remove</button>`
+          : `<button class="btn-light btn-small" onclick="toggleProduct('${esc(p.id)}',true)">Activate</button>`}
+      </div></td>
+    </tr>
+  `).join("") || '<tr><td colspan="6" class="empty">No products found.</td></tr>';
+
+  $("sProducts").textContent = products.filter(p => p.active).length;
+}
+
+function productForm(p = {}) {
+  const editing = !!p.id;
+
+  $("modalTitle").textContent = editing ? "Edit product" : "Add product";
+
+  $("modalBody").innerHTML = `
+    <form id="productForm">
+      <div class="form-grid">
+        <label>Product name *
+          <input name="name" required maxlength="120" value="${esc(p.name || "")}">
+        </label>
+        <label>Price (INR) *
+          <input name="price" type="number" min="0.01" step="0.01" required
+            value="${p.price_paise == null ? "" : (p.price_paise / 100).toFixed(2)}">
+        </label>
+        <label>Pack size / type *
+          <input name="pack_type" required value="${esc(p.pack_type || "")}">
+        </label>
+        <label>Stock quantity
+          <input name="stock" type="number" min="0" step="1" value="${p.stock ?? ""}">
+        </label>
+        <label class="wide">Image path or URL
+          <input name="image" value="${esc(p.image || "")}" placeholder="assets/product.png">
+        </label>
+        <label class="wide">Description
+          <textarea name="description">${esc(p.description || "")}</textarea>
+        </label>
+        <label class="wide">
+          <span><input name="active" type="checkbox" ${p.active === 0 ? "" : "checked"}>
+          Show this product on storefront</span>
+        </label>
+      </div>
+      <div class="toolbar" style="justify-content:flex-end">
+        <button type="button" class="btn-light" id="cancelProduct">Cancel</button>
+        <button id="saveProduct">${editing ? "Save changes" : "Add product"}</button>
+      </div>
+    </form>
+  `;
+
+  $("modalBackdrop").classList.remove("hidden");
+  $("cancelProduct").onclick = () => $("modalBackdrop").classList.add("hidden");
+
+  $("productForm").onsubmit = async event => {
+    event.preventDefault();
+
+    const fd = new FormData(event.target);
+
+    const body = {
+      id: p.id,
+      name: fd.get("name"),
+      price: fd.get("price"),
+      pack_type: fd.get("pack_type"),
+      stock: fd.get("stock"),
+      image: fd.get("image"),
+      description: fd.get("description"),
+      active: fd.get("active") === "on"
+    };
+
+    try {
+      await api("admin/products", {
+        method: editing ? "PATCH" : "POST",
+        body: JSON.stringify(body)
+      });
+
+      $("modalBackdrop").classList.add("hidden");
+      await loadAll();
+      notify(editing ? "Product updated" : "Product added");
+
+    } catch (error) {
+      notify(error.message);
+    }
+  };
+}
+
+$("addProductBtn").onclick = () => productForm();
+
+function editProduct(id) {
+  const product = products.find(p => p.id === id);
+  if (product) productForm(product);
+}
+
+async function removeProduct(id) {
+  const product = products.find(p => p.id === id);
+  if (!product || !confirm("Hide " + product.name + " from storefront?")) return;
+  await toggleProduct(id, false);
+}
+
+async function toggleProduct(id, active) {
+  try {
+    const p = products.find(x => x.id === id);
+
+    await api("admin/products", {
+      method: "PATCH",
+      body: JSON.stringify({
+        id,
+        name: p.name,
+        description: p.description,
+        image: p.image,
+        pack_type: p.pack_type,
+        price: p.price_paise / 100,
+        stock: p.stock ?? "",
+        active
+      })
+    });
+
+    await loadAll();
+    notify(active ? "Product activated" : "Product hidden");
+
+  } catch (error) {
+    notify(error.message);
+  }
+}
+
+function renderOverview() {
+  const total = orders.reduce((s,o) => s + (Number(o.total_paise) || 0), 0);
+  const paid = orders.filter(o => o.payment_status === "paid")
+    .reduce((s,o) => s + (Number(o.total_paise) || 0), 0);
+
+  $("sOrders").textContent = orders.length;
+  $("sValue").textContent = money(total);
+  $("sPaid").textContent = money(paid);
+  $("sProducts").textContent = products.filter(p => p.active).length;
+
+  $("recentOrders").innerHTML = orders.slice(0,6).map(o => `
+    <div class="report-row">
+      <div><b class="order-id">${esc(o.order_number)}</b>
+        <div class="tiny muted">${esc(o.customer_name)}</div></div>
+      <div><b>${money(o.total_paise)}</b>
+        <div class="tiny">${esc(o.order_status)}</div></div>
+    </div>
+  `).join("") || '<div class="empty">No orders yet.</div>';
+
+  const statuses = ["new","confirmed","processing","shipped","delivered","cancelled"];
+
+  $("fulfilment").innerHTML = statuses.map(status => {
+    const count = orders.filter(o => o.order_status === status).length;
+    const percent = orders.length ? count / orders.length * 100 : 0;
+
+    return `<div style="margin:12px 0">
+      <div class="report-row"><span>${status}</span><b>${count}</b></div>
+      <div class="bar"><span style="width:${percent}%"></span></div>
+    </div>`;
+  }).join("");
+}
+
+function renderReports() {
+  const total = orders.reduce((s,o) => s + (Number(o.total_paise) || 0), 0);
+  const paid = orders.filter(o => o.payment_status === "paid");
+  const paidValue = paid.reduce((s,o) => s + (Number(o.total_paise) || 0), 0);
+
+  $("rOrders").textContent = orders.length;
+  $("rValue").textContent = money(total);
+  $("rPaid").textContent = money(paidValue);
+  $("rCod").textContent = orders.filter(o => o.payment_method === "cod").length;
+
+  const draw = (id, values) => {
+    $(id).innerHTML = values.map(([name,count]) => {
+      const percent = orders.length ? count / orders.length * 100 : 0;
+      return `<div style="margin:12px 0">
+        <div class="report-row"><span>${esc(name)}</span><b>${count}</b></div>
+        <div class="bar"><span style="width:${percent}%"></span></div>
+      </div>`;
+    }).join("");
+  };
+
+  draw("statusReport", ["new","confirmed","processing","shipped","delivered","cancelled"]
+    .map(s => [s,orders.filter(o => o.order_status === s).length]));
+
+  draw("paymentReport", [
+    ["Paid",paid.length],
+    ["Pending",orders.length - paid.length],
+    ["COD",orders.filter(o => o.payment_method === "cod").length]
+  ]);
+}
+
+function csvCell(value) {
+  return '"' + String(value ?? "").replace(/"/g,'""') + '"';
+}
+
+function exportCSV(filtered) {
+  const query = $("orderSearch").value.trim().toLowerCase();
+  const status = $("statusFilter").value;
+  const payment = $("paymentFilter").value;
+
+  const data = filtered ? orders.filter(o =>
+    (!status || o.order_status === status) &&
+    (!payment || o.payment_method === payment) &&
+    (!query || [o.order_number,o.customer_name,o.phone,o.email]
+      .join(" ").toLowerCase().includes(query))
+  ) : orders;
+
+  const headings = [
+    "Order number","Created at","Customer","Email","Phone",
+    "Items","Total INR","Payment method","Payment status",
+    "Order status","Address","City","State","Postal code","Country"
+  ];
+
+  const rows = data.map(o => [
+    o.order_number,o.created_at,o.customer_name,o.email,o.phone,
+    (o.items || []).map(i => `${i.quantity} x ${i.product_name}`).join("; "),
+    (Number(o.total_paise || 0) / 100).toFixed(2),
+    o.payment_method,o.payment_status,o.order_status,
+    o.address,o.city,o.state,o.postal_code,o.country
+  ]);
+
+  const csv = [headings,...rows]
+    .map(row => row.map(csvCell).join(",")).join("\r\n");
+
+  const blob = new Blob(["\ufeff" + csv], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "nuttyment-orders-latest-300.csv";
+  link.click();
+
+  URL.revokeObjectURL(url);
+  notify("Exported " + data.length + " orders");
+}
+
+$("exportVisible").onclick = () => exportCSV(true);
+$("exportAll").onclick = () => exportCSV(false);
+
+["orderSearch","statusFilter","paymentFilter"].forEach(id =>
+  $(id).addEventListener(id === "orderSearch" ? "input" : "change", renderOrders)
+);
+
+["productSearch","productFilter"].forEach(id =>
+  $(id).addEventListener(id === "productSearch" ? "input" : "change", renderProducts)
+);
+
+// Start with login or restore an existing admin session.
+if (token) {
+  showApp();
+} else {
+  showLogin();
+}
+</script>
+
+</body>
+</html>
